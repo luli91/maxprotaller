@@ -11,15 +11,21 @@ import {
   Box,
   Typography,
   Paper,
+  Button,
+  TextField,
+  tableCellClasses,
   styled
 } from '@mui/material';
-import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
+import { KeyboardArrowDown, KeyboardArrowUp, Delete, Edit } from '@mui/icons-material';
 
 // Estilos personalizados
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  fontWeight: 'bold',
-  color: theme.palette.text.primary,
-}));
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: theme.palette.common.black,
+      color: theme.palette.common.white,
+    },
+  }));
+  
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
@@ -36,7 +42,7 @@ const CollapsibleTableContainer = styled(TableContainer)(({ theme }) => ({
 }));
 
 // Función para crear datos de autos
-function createData(dominio, marca, modelo, color, chasis, motor, kilometraje) {
+function createData(dominio, marca, modelo, color, chasis, motor, kilometraje, compañia) {
   return {
     dominio,
     marca,
@@ -45,6 +51,7 @@ function createData(dominio, marca, modelo, color, chasis, motor, kilometraje) {
     chasis,
     motor,
     kilometraje,
+    compañia,
     history: [
       { date: '2020-01-05', description: 'Cambio de aceite', observations: 'Realizado a los 10,000 km' },
       { date: '2020-01-02', description: 'Cambio de neumáticos', observations: 'Neumáticos reemplazados' }
@@ -52,19 +59,21 @@ function createData(dominio, marca, modelo, color, chasis, motor, kilometraje) {
   };
 }
 
-// Datos de ejemplo
-const rows = [
-  createData('ABC123', 'Toyota', 'Corolla', 'Rojo', 'XYZ123', '1.8L', '15,000 km'),
-  createData('DEF456', 'Honda', 'Civic', 'Azul', 'ABC456', '2.0L', '25,000 km'),
-  createData('GHI789', 'Ford', 'Focus', 'Negro', 'LMN789', '1.6L', '35,000 km'),
-  createData('JKL012', 'Chevrolet', 'Cruze', 'Blanco', 'PQR012', '1.4L', '45,000 km'),
-  createData('MNO345', 'Hyundai', 'Elantra', 'Plateado', 'STU345', '1.6L', '55,000 km')
-];
-
 // Componente de fila
-function Row(props) {
-  const { row } = props;
+function Row({ row, onDelete, onEdit, onDeleteHistory, onEditHistory, onAddHistory }) {
   const [open, setOpen] = React.useState(false);
+  const [isEditing, setIsEditing] = React.useState(false);
+  const [editValues, setEditValues] = React.useState({ ...row });
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditValues({ ...editValues, [name]: value });
+  };
+
+  const handleSave = () => {
+    onEdit(editValues);
+    setIsEditing(false);
+  };
 
   return (
     <React.Fragment>
@@ -78,15 +87,99 @@ function Row(props) {
             {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
           </IconButton>
         </TableCell>
-        <StyledTableCell component="th" scope="row">
-          {row.dominio}
-        </StyledTableCell>
-        <StyledTableCell>{row.marca}</StyledTableCell>
-        <StyledTableCell>{row.modelo}</StyledTableCell>
-        <StyledTableCell>{row.color}</StyledTableCell>
-        <StyledTableCell>{row.chasis}</StyledTableCell>
-        <StyledTableCell>{row.motor}</StyledTableCell>
-        <StyledTableCell>{row.kilometraje}</StyledTableCell>
+        {isEditing ? (
+          <>
+            <StyledTableCell>
+              <TextField
+                name="dominio"
+                value={editValues.dominio}
+                onChange={handleEditChange}
+                size="small"
+              />
+            </StyledTableCell>
+            <StyledTableCell>
+              <TextField
+                name="marca"
+                value={editValues.marca}
+                onChange={handleEditChange}
+                size="small"
+              />
+            </StyledTableCell>
+            <StyledTableCell>
+              <TextField
+                name="modelo"
+                value={editValues.modelo}
+                onChange={handleEditChange}
+                size="small"
+              />
+            </StyledTableCell>
+            <StyledTableCell>
+              <TextField
+                name="color"
+                value={editValues.color}
+                onChange={handleEditChange}
+                size="small"
+              />
+            </StyledTableCell>
+            <StyledTableCell>
+              <TextField
+                name="chasis"
+                value={editValues.chasis}
+                onChange={handleEditChange}
+                size="small"
+              />
+            </StyledTableCell>
+            <StyledTableCell>
+              <TextField
+                name="motor"
+                value={editValues.motor}
+                onChange={handleEditChange}
+                size="small"
+              />
+            </StyledTableCell>
+            <StyledTableCell>
+              <TextField
+                name="kilometraje"
+                value={editValues.kilometraje}
+                onChange={handleEditChange}
+                size="small"
+              />
+            </StyledTableCell>
+            <StyledTableCell>
+              <TextField
+                name="compañia"
+                value={editValues.compañia}
+                onChange={handleEditChange}
+                size="small"
+              />
+            </StyledTableCell>
+            <TableCell>
+              <Button onClick={handleSave}>Guardar</Button>
+              <Button onClick={() => setIsEditing(false)}>Cancelar</Button>
+            </TableCell>
+          </>
+        ) : (
+          <>
+            <StyledTableCell component="th" scope="row">
+              {row.dominio}
+            </StyledTableCell>
+            <StyledTableCell>{row.marca}</StyledTableCell>
+            <StyledTableCell>{row.modelo}</StyledTableCell>
+            <StyledTableCell>{row.color}</StyledTableCell>
+            <StyledTableCell>{row.chasis}</StyledTableCell>
+            <StyledTableCell>{row.motor}</StyledTableCell>
+            <StyledTableCell>{row.kilometraje}</StyledTableCell>
+            <StyledTableCell>{row.compañia}</StyledTableCell>
+            <TableCell>
+              <IconButton onClick={() => setIsEditing(true)}>
+                <Edit />
+              </IconButton>
+              <IconButton onClick={() => onDelete(row.dominio)}>
+                <Delete />
+              </IconButton>
+            </TableCell>
+          </>
+        )}
       </StyledTableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
@@ -101,18 +194,21 @@ function Row(props) {
                     <StyledTableCell>Fecha</StyledTableCell>
                     <StyledTableCell>Descripción</StyledTableCell>
                     <StyledTableCell>Observaciones</StyledTableCell>
+                    <TableCell>Acciones</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {row.history.map((historyRow) => (
-                    <TableRow key={historyRow.date}>
-                      <TableCell component="th" scope="row">
-                        {historyRow.date}
-                      </TableCell>
-                      <TableCell>{historyRow.description}</TableCell>
-                      <TableCell>{historyRow.observations}</TableCell>
-                    </TableRow>
+                  {row.history.map((historyRow, index) => (
+                    <HistoryRow
+                      key={historyRow.date}
+                      historyRow={historyRow}
+                      row={row}
+                      index={index}
+                      onDeleteHistory={onDeleteHistory}
+                      onEditHistory={onEditHistory}
+                    />
                   ))}
+                  <AddHistoryRow row={row} onAddHistory={onAddHistory} />
                 </TableBody>
               </Table>
             </Box>
@@ -123,29 +219,217 @@ function Row(props) {
   );
 }
 
+function HistoryRow({ historyRow, row, index, onDeleteHistory, onEditHistory }) {
+  const [isEditing, setIsEditing] = React.useState(false);
+  const [editValues, setEditValues] = React.useState({ ...historyRow });
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditValues({ ...editValues, [name]: value });
+  };
+
+  const handleSave = () => {
+    onEditHistory(row.dominio, index, editValues);
+    setIsEditing(false);
+  };
+
+  return (
+    <TableRow>
+      {isEditing ? (
+        <>
+          <TableCell>
+            <TextField
+              name="date"
+              value={editValues.date}
+              onChange={handleEditChange}
+              size="small"
+            />
+          </TableCell>
+          <TableCell>
+            <TextField
+              name="description"
+              value={editValues.description}
+              onChange={handleEditChange}
+              size="small"
+            />
+          </TableCell>
+          <TableCell>
+            <TextField
+              name="observations"
+              value={editValues.observations}
+              onChange={handleEditChange}
+              size="small"
+            />
+          </TableCell>
+          <TableCell>
+            <Button onClick={handleSave}>Guardar</Button>
+            <Button onClick={() => setIsEditing(false)}>Cancelar</Button>
+          </TableCell>
+        </>
+      ) : (
+        <>
+          <TableCell component="th" scope="row">
+            {historyRow.date}
+          </TableCell>
+          <TableCell>{historyRow.description}</TableCell>
+          <TableCell>{historyRow.observations}</TableCell>
+          <TableCell>
+            <IconButton onClick={() => setIsEditing(true)}>
+              <Edit />
+            </IconButton>
+            <IconButton onClick={() => onDeleteHistory(row.dominio, index)}>
+              <Delete />
+            </IconButton>
+          </TableCell>
+        </>
+      )}
+    </TableRow>
+  );
+}
+
+function AddHistoryRow({ row, onAddHistory }) {
+  const [newHistory, setNewHistory] = React.useState({
+    date: '',
+    description: '',
+    observations: ''
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setNewHistory({ ...newHistory, [name]: value });
+  };
+
+  const handleAdd = () => {
+    onAddHistory(row.dominio, newHistory);
+    setNewHistory({ date: '', description: '', observations: '' });
+  };
+
+  return (
+    <TableRow>
+      <TableCell>
+        <TextField
+          name="date"
+          value={newHistory.date}
+          onChange={handleChange}
+          size="small"
+        />
+      </TableCell>
+      <TableCell>
+        <TextField
+          name="description"
+          value={newHistory.description}
+          onChange={handleChange}
+          size="small"
+        />
+      </TableCell>
+      <TableCell>
+        <TextField
+          name="observations"
+          value={newHistory.observations}
+          onChange={handleChange}
+          size="small"
+        />
+      </TableCell>
+      <TableCell>
+        <Button onClick={handleAdd}>Agregar</Button>
+      </TableCell>
+    </TableRow>
+  );
+}
+
 // Componente principal
 export default function CollapsibleTable() {
+  const [rows, setRows] = React.useState([
+    createData('ABC123', 'Toyota', 'Corolla', 'Rojo', 'XYZ123', '1.8L', '15,000 km', 'Sura'),
+    createData('DEF456', 'Honda', 'Civic', 'Azul', 'ABC456', '2.0L', '25,000 km', 'Sura'),
+    createData('GHI789', 'Ford', 'Focus', 'Negro', 'LMN789', '1.6L', '35,000 km', 'Sura'),
+    createData('JKL012', 'Chevrolet', 'Cruze', 'Blanco', 'PQR012', '1.4L', '45,000 km', 'Sura'),
+    createData('MNO345', 'Hyundai', 'Elantra', 'Plateado', 'STU345', '1.6L', '55,000 km', 'Sura')
+  ]);
+
+  const handleAddCar = (newCar) => {
+    setRows([...rows, createData(newCar.dominio, newCar.marca, newCar.modelo, newCar.color, newCar.chasis, newCar.motor, newCar.kilometraje, newCar.compañia)]);
+  };
+
+  const handleDeleteCar = (dominio) => {
+    setRows(rows.filter((row) => row.dominio !== dominio));
+  };
+
+  const handleEditCar = (updatedCar) => {
+    setRows(rows.map((row) => (row.dominio === updatedCar.dominio ? updatedCar : row)));
+  };
+
+  const handleAddHistory = (dominio, newHistory) => {
+    setRows(rows.map((row) =>
+      row.dominio === dominio
+        ? { ...row, history: [...row.history, newHistory] }
+        : row
+    ));
+  };
+
+  const handleDeleteHistory = (dominio, index) => {
+    setRows(rows.map((row) =>
+      row.dominio === dominio
+        ? { ...row, history: row.history.filter((_, i) => i !== index) }
+        : row
+    ));
+  };
+
+  const handleEditHistory = (dominio, index, updatedHistory) => {
+    setRows(rows.map((row) =>
+      row.dominio === dominio
+        ? { ...row, history: row.history.map((hist, i) => (i === index ? updatedHistory : hist)) }
+        : row
+    ));
+  };
+
   return (
-    <CollapsibleTableContainer component={Paper}>
-      <Table aria-label="collapsible table">
-        <TableHead>
-          <TableRow>
-            <TableCell />
-            <StyledTableCell>Dominio</StyledTableCell>
-            <StyledTableCell>Marca</StyledTableCell>
-            <StyledTableCell>Modelo</StyledTableCell>
-            <StyledTableCell>Color</StyledTableCell>
-            <StyledTableCell>Chasis</StyledTableCell>
-            <StyledTableCell>Motor</StyledTableCell>
-            <StyledTableCell>Kilometraje</StyledTableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <Row key={row.dominio} row={row} />
-          ))}
-        </TableBody>
-      </Table>
-    </CollapsibleTableContainer>
+    <>
+      <AddCarForm onAddCar={handleAddCar} />
+      <CollapsibleTableContainer component={Paper}>
+        <Table aria-label="collapsible table">
+          <TableHead>
+            <TableRow>
+              <TableCell />
+              <StyledTableCell>DOMINIO</StyledTableCell>
+              <StyledTableCell>MARCA</StyledTableCell>
+              <StyledTableCell>MODELO</StyledTableCell>
+              <StyledTableCell>COLOR</StyledTableCell>
+              <StyledTableCell>CHASIS</StyledTableCell>
+              <StyledTableCell>MOTOR</StyledTableCell>
+              <StyledTableCell>KILOMETRAJE</StyledTableCell>
+              <StyledTableCell>COMPAÑIA</StyledTableCell>
+              <TableCell></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {rows.map((row) => (
+              <Row
+                key={row.dominio}
+                row={row}
+                onDelete={handleDeleteCar}
+                onEdit={handleEditCar}
+                onDeleteHistory={handleDeleteHistory}
+                onEditHistory={handleEditHistory}
+                onAddHistory={handleAddHistory}
+              />
+            ))}
+          </TableBody>
+        </Table>
+      </CollapsibleTableContainer>
+    </>
   );
+}
+
+function AddCarForm({ onAddCar }) {
+  const [newCar, setNewCar] = React.useState({
+    dominio: '',
+    marca: '',
+    modelo: '',
+    color: '',
+    chasis: '',
+    motor: '',
+    kilometraje: '',
+    compañia: ''
+  });
 }
