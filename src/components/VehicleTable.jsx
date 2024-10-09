@@ -14,9 +14,16 @@ import {
   Button,
   TextField,
   tableCellClasses,
-  styled
+  styled,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp, Delete, Edit } from '@mui/icons-material';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Estilos personalizados
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -64,6 +71,7 @@ function Row({ row, onDelete, onEdit, onDeleteHistory, onEditHistory, onAddHisto
   const [open, setOpen] = React.useState(false);
   const [isEditing, setIsEditing] = React.useState(false);
   const [editValues, setEditValues] = React.useState({ ...row });
+  const [openDialog, setOpenDialog] = React.useState(false);
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
@@ -72,7 +80,14 @@ function Row({ row, onDelete, onEdit, onDeleteHistory, onEditHistory, onAddHisto
 
   const handleSave = () => {
     onEdit(editValues);
+    toast.success('Vehículo editado correctamente');
     setIsEditing(false);
+  };
+
+  const handleDeleteConfirm = () => {
+    onDelete(row.dominio);
+    toast.success('Vehículo y su historial eliminados correctamente');
+    setOpenDialog(false); 
   };
 
   return (
@@ -174,7 +189,7 @@ function Row({ row, onDelete, onEdit, onDeleteHistory, onEditHistory, onAddHisto
               <IconButton onClick={() => setIsEditing(true)}>
                 <Edit />
               </IconButton>
-              <IconButton onClick={() => onDelete(row.dominio)}>
+              <IconButton onClick={() => setOpenDialog(true)}>
                 <Delete />
               </IconButton>
             </TableCell>
@@ -194,7 +209,7 @@ function Row({ row, onDelete, onEdit, onDeleteHistory, onEditHistory, onAddHisto
                     <StyledTableCell>Fecha</StyledTableCell>
                     <StyledTableCell>Descripción</StyledTableCell>
                     <StyledTableCell>Observaciones</StyledTableCell>
-                    <TableCell>Acciones</TableCell>
+                    <TableCell></TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -215,6 +230,23 @@ function Row({ row, onDelete, onEdit, onDeleteHistory, onEditHistory, onAddHisto
           </Collapse>
         </TableCell>
       </TableRow>
+
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <DialogTitle>Confirmación de Eliminación</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            ¿Está seguro de que desea eliminar este vehículo y su historial?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={handleDeleteConfirm} color="secondary">
+            Eliminar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </React.Fragment>
   );
 }
@@ -222,6 +254,7 @@ function Row({ row, onDelete, onEdit, onDeleteHistory, onEditHistory, onAddHisto
 function HistoryRow({ historyRow, row, index, onDeleteHistory, onEditHistory }) {
   const [isEditing, setIsEditing] = React.useState(false);
   const [editValues, setEditValues] = React.useState({ ...historyRow });
+  const [openDialog, setOpenDialog] = React.useState(false); 
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
@@ -230,60 +263,86 @@ function HistoryRow({ historyRow, row, index, onDeleteHistory, onEditHistory }) 
 
   const handleSave = () => {
     onEditHistory(row.dominio, index, editValues);
+    toast.success('Historial editado correctamente');
     setIsEditing(false);
   };
 
+  const handleDeleteConfirm = () => {
+    onDeleteHistory(row.dominio, index);
+    toast.success('Historial eliminado correctamente');
+    setOpenDialog(false); 
+  };
+
   return (
-    <TableRow>
-      {isEditing ? (
-        <>
-          <TableCell>
-            <TextField
-              name="date"
-              value={editValues.date}
-              onChange={handleEditChange}
-              size="small"
-            />
-          </TableCell>
-          <TableCell>
-            <TextField
-              name="description"
-              value={editValues.description}
-              onChange={handleEditChange}
-              size="small"
-            />
-          </TableCell>
-          <TableCell>
-            <TextField
-              name="observations"
-              value={editValues.observations}
-              onChange={handleEditChange}
-              size="small"
-            />
-          </TableCell>
-          <TableCell>
-            <Button onClick={handleSave}>Guardar</Button>
-            <Button onClick={() => setIsEditing(false)}>Cancelar</Button>
-          </TableCell>
-        </>
-      ) : (
-        <>
-          <TableCell component="th" scope="row">
-            {historyRow.date}
-          </TableCell>
-          <TableCell>{historyRow.description}</TableCell>
-          <TableCell>{historyRow.observations}</TableCell>
-          <TableCell>
-            <IconButton onClick={() => setIsEditing(true)}>
-              <Edit />
-            </IconButton>
-            <IconButton onClick={() => onDeleteHistory(row.dominio, index)}>
-              <Delete />
-            </IconButton>
-          </TableCell>
-        </>
-      )}
-    </TableRow>
+    <>
+      <TableRow>
+        {isEditing ? (
+          <>
+            <TableCell>
+              <TextField
+                name="date"
+                value={editValues.date}
+                onChange={handleEditChange}
+                size="small"
+              />
+            </TableCell>
+            <TableCell>
+              <TextField
+                name="description"
+                value={editValues.description}
+                onChange={handleEditChange}
+                size="small"
+              />
+            </TableCell>
+            <TableCell>
+              <TextField
+                name="observations"
+                value={editValues.observations}
+                onChange={handleEditChange}
+                size="small"
+              />
+            </TableCell>
+            <TableCell>
+              <Button onClick={handleSave}>Guardar</Button>
+              <Button onClick={() => setIsEditing(false)}>Cancelar</Button>
+            </TableCell>
+          </>
+        ) : (
+          <>
+            <TableCell component="th" scope="row">
+              {historyRow.date}
+            </TableCell>
+            <TableCell>{historyRow.description}</TableCell>
+            <TableCell>{historyRow.observations}</TableCell>
+            <TableCell>
+              <IconButton onClick={() => setIsEditing(true)}>
+                <Edit />
+              </IconButton>
+              <IconButton onClick={() => setOpenDialog(true)}> 
+                <Delete />
+              </IconButton>
+            </TableCell>
+          </>
+        )}
+      </TableRow>
+
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <DialogTitle>Confirmación de Eliminación</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            ¿Está seguro de que desea eliminar este historial?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={handleDeleteConfirm} color="secondary">
+            Eliminar
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 }
 
@@ -300,7 +359,12 @@ function AddHistoryRow({ row, onAddHistory }) {
   };
 
   const handleAdd = () => {
+    if (!newHistory.date || !newHistory.description || !newHistory.observations) {
+      toast.error('Por favor, complete todos los campos antes de agregar.');
+      return;
+    }
     onAddHistory(row.dominio, newHistory);
+    toast.success('Historial agregado correctamente');
     setNewHistory({ date: '', description: '', observations: '' });
   };
 
@@ -331,7 +395,15 @@ function AddHistoryRow({ row, onAddHistory }) {
         />
       </TableCell>
       <TableCell>
-        <Button onClick={handleAdd}>Agregar</Button>
+      <Button
+    onClick={handleAdd}
+    style={{
+      backgroundColor: '#ffc107',  
+      color: '#333333',  
+    }}
+  >
+    Agregar
+  </Button>
       </TableCell>
     </TableRow>
   );

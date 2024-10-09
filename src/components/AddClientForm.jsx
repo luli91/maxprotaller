@@ -4,11 +4,11 @@ import { Form, Button, Container } from 'react-bootstrap';
 const AddClientForm = ({ onAddClient }) => {
   const [formValues, setFormValues] = useState({
     nombre: '',
-    apellido: '',
     telefono: '',
     mail: '',
     vehiculo: '',
     compañia: '',
+    dominio: '',
   });
 
   const handleChange = (e) => {
@@ -21,11 +21,11 @@ const AddClientForm = ({ onAddClient }) => {
     onAddClient(formValues);
     setFormValues({
         nombre: '',
-        apellido: '',
         telefono: '',
         mail: '',
         vehiculo: '',
         compañia: '',
+        dominio: '',
     });
   };
 
@@ -39,16 +39,6 @@ const AddClientForm = ({ onAddClient }) => {
             type="text"
             name="nombre"
             value={formValues.nombre}
-            onChange={handleChange}
-            required
-          />
-        </Form.Group>
-        <Form.Group controlId="formApellido">
-          <Form.Label>Apellido</Form.Label>
-          <Form.Control
-            type="text"
-            name="apellido"
-            value={formValues.apellido}
             onChange={handleChange}
             required
           />
@@ -89,6 +79,16 @@ const AddClientForm = ({ onAddClient }) => {
             type="text"
             name="compañia"
             value={formValues.compañia}
+            onChange={handleChange}
+            required
+          />
+        </Form.Group>
+        <Form.Group controlId="formDominio">
+          <Form.Label>Dominio</Form.Label>
+          <Form.Control
+            type="text"
+            name="dominio"
+            value={formValues.dominio}
             onChange={handleChange}
             required
           />

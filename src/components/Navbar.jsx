@@ -30,7 +30,7 @@ function NavScroll() {
               className="me-2"
               aria-label="Buscar"
             />
-            <Button variant="outline-primary">Buscar</Button>
+            <Button variant="outline-warning">Buscar</Button>
           </Form>
         </Navbar.Collapse>
       </Container>

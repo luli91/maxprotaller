@@ -6,6 +6,8 @@ import MyNavbar from './components/Navbar'
 import NewVehicle from "./pages/NewVehicle";
 import Clients from "./pages/Clients";
 import NewClient from "./pages/NewClient";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   return (
@@ -18,6 +20,7 @@ const App = () => {
         <Route path="/Clients" element={<Clients />} />
         <Route path="/NewClient" element={<NewClient />} />
       </Routes>
+      <ToastContainer />
     </Router>
   );
 };

@@ -14,9 +14,9 @@ const Clients = ({ searchTerm }) => {
   return (
     <div>
       <h1 className="mb-4">Lista de Clientes</h1>
-      <Button variant="primary" onClick={handleAddVehicleClick}
+      <Button variant="warning" onClick={handleAddVehicleClick}
       >
-        + Auto
+        + Cliente
       </Button>
       <ClientTable searchTerm={searchTerm} />
     </div>

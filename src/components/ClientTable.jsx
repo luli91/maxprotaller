@@ -31,16 +31,16 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-function createData(name, lastName, phone, email, car) {
-  return { name, lastName, phone, email, car };
+function createData(name, phone, email, car, dominio) {
+  return { name, phone, email, car, dominio };
 }
 
 const rows = [
-  createData('John', 'Doe', '123-456-7890', 'john.doe@example.com', 'Toyota Corolla'),
-  createData('Jane', 'Smith', '234-567-8901', 'jane.smith@example.com', 'Honda Civic'),
-  createData('Alice', 'Johnson', '345-678-9012', 'alice.johnson@example.com', 'Ford Focus'),
-  createData('Bob', 'Brown', '456-789-0123', 'bob.brown@example.com', 'Chevrolet Malibu'),
-  createData('Carol', 'Davis', '567-890-1234', 'carol.davis@example.com', 'Hyundai Elantra'),
+  createData('John Doe', '123-456-7890', 'john.doe@example.com', 'Toyota Corolla', 'ADB156FT'),
+  createData('Jane Smith', '234-567-8901', 'jane.smith@example.com', 'Honda Civic', 'ADB156FT'),
+  createData('Alice Johnson', '345-678-9012', 'alice.johnson@example.com', 'Ford Focus', 'ADB156FT'),
+  createData('Bob Brown', '456-789-0123', 'bob.brown@example.com', 'Chevrolet Malibu', 'ADB156FT'),
+  createData('Carol Davis', '567-890-1234', 'carol.davis@example.com', 'Hyundai Elantra', 'ADB156FT'),
 ];
 
 export default function CustomizedTables() {
@@ -58,10 +58,10 @@ export default function CustomizedTables() {
         <TableHead>
           <TableRow>
             <StyledTableCell>Nombre</StyledTableCell>
-            <StyledTableCell>Apellido</StyledTableCell>
             <StyledTableCell>Teléfono</StyledTableCell>
             <StyledTableCell>Mail</StyledTableCell>
-            <StyledTableCell>Auto</StyledTableCell>
+            <StyledTableCell>Modelo</StyledTableCell>
+            <StyledTableCell>Dominio</StyledTableCell>
             <StyledTableCell>Acciones</StyledTableCell>
           </TableRow>
         </TableHead>
@@ -71,10 +71,10 @@ export default function CustomizedTables() {
               <StyledTableCell component="th" scope="row">
                 {row.name}
               </StyledTableCell>
-              <StyledTableCell>{row.lastName}</StyledTableCell>
               <StyledTableCell>{row.phone}</StyledTableCell>
               <StyledTableCell>{row.email}</StyledTableCell>
               <StyledTableCell>{row.car}</StyledTableCell>
+              <StyledTableCell>{row.dominio}</StyledTableCell>
               <StyledTableCell>
                 <IconButton onClick={() => handleEdit(row.name)}>
                   <EditIcon />

@@ -14,7 +14,7 @@ const Vehicles = ({ searchTerm }) => {
   return (
     <div>
       <h1 className="mb-4">Lista de Vehículos</h1>
-      <Button variant="primary" onClick={handleAddVehicleClick}
+      <Button variant="warning" onClick={handleAddVehicleClick}
       >
         + Auto
       </Button>
