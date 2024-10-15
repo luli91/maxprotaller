@@ -20,7 +20,7 @@ function NavScroll() {
           <Nav className="me-auto my-2 my-lg-0" navbarScroll>
             <Nav.Link as={Link} to="/clients">Clientes</Nav.Link>
             <Nav.Link as={Link} to="/vehicles">Vehículos</Nav.Link>
-            <Nav.Link as={Link} to="/quotes">Presupuestos</Nav.Link>
+            <Nav.Link as={Link} to="/budgets">Presupuestos</Nav.Link>
             <Nav.Link as={Link} to="/calendar">Calendario</Nav.Link>
           </Nav>
           <Form className="d-flex">
